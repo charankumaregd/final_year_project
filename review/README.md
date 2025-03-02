@@ -71,56 +71,44 @@ Traditional real-time document editors face significant challenges due to high l
 
 ## Tools & Frameworks
 
-<div style="display: flex; flex-wrap: wrap; gap: 1.5rem; align-items: center;">
-  <div style="display: flex; flex-direction: column; align-items: center; text-align: center;">
-    <img src="./assets/icons/nextjs.png" alt="Next.js" height="50">
-    <span>Next.js</span>
-  </div>
-  <div style="display: flex; flex-direction: column; align-items: center; text-align: center;">
-    <img src="./assets/icons/typescript.png" alt="TypeScript" height="50">
-    <span>TypeScript</span>
-  </div>
-  <div style="display: flex; flex-direction: column; align-items: center; text-align: center;">
-    <img src="./assets/icons/tailwindcss.png" alt="Tailwind CSS" height="50">
-    <span>Tailwind CSS</span>
-  </div>
-  <div style="display: flex; flex-direction: column; align-items: center; text-align: center;">
-    <img src="./assets/icons/postgresql.png" alt="PostgreSQL" height="50">
-    <span>PostgreSQL</span>
-  </div>
-  <div style="display: flex; flex-direction: column; align-items: center; text-align: center;">
-    <img src="./assets/icons/prisma.png" alt="Prisma" height="50">
-    <span>Prisma</span>
-  </div>
-  <div style="display: flex; flex-direction: column; align-items: center; text-align: center;">
-    <img src="./assets/icons/webrtc.png" alt="WebRTC" height="50">
-    <span>WebRTC</span>
-  </div>
-  <div style="display: flex; flex-direction: column; align-items: center; text-align: center;">
-    <img src="./assets/icons/websocket.png" alt="WebSocket" height="50">
-    <span>WebSocket</span>
-  </div>
-  <div style="display: flex; flex-direction: column; align-items: center; text-align: center;">
-    <img src="./assets/icons/crdts-yjs.png" alt="CRDTs (Yjs)" height="50">
-    <span>CRDTs (Yjs)</span>
-  </div>
-  <div style="display: flex; flex-direction: column; align-items: center; text-align: center;">
-    <img src="./assets/icons/jwt.png" alt="JWT" height="50">
-    <span>JWT</span>
-  </div>
-  <div style="display: flex; flex-direction: column; align-items: center; text-align: center;">
-    <img src="./assets/icons/git.png" alt="Git" height="50">
-    <span>Git</span>
-  </div>
-  <div style="display: flex; flex-direction: column; align-items: center; text-align: center;">
-    <img src="./assets/icons/github.png" alt="GitHub" height="50">
-    <span>GitHub</span>
-  </div>
-  <div style="display: flex; flex-direction: column; align-items: center; text-align: center;">
-    <img src="./assets/icons/postman.png" alt="Postman" height="50">
-    <span>Postman</span>
-  </div>
-</div>
+<p align="left">
+  <a href="https://nextjs.org/" target="_blank" rel="noreferrer">
+    <img src="./assets/icons/nextjs.png" alt="Next.js" width="40" height="40">
+  </a>
+  <a href="https://www.typescriptlang.org/" target="_blank" rel="noreferrer">
+    <img src="./assets/icons/typescript.png" alt="TypeScript" width="40" height="40">
+  </a>
+  <a href="https://tailwindcss.com/" target="_blank" rel="noreferrer">
+    <img src="./assets/icons/tailwindcss.png" alt="Tailwind CSS" width="40" height="40">
+  </a>
+  <a href="https://www.postgresql.org" target="_blank" rel="noreferrer">
+    <img src="./assets/icons/postgresql.png" alt="PostgreSQL" width="40" height="40">
+  </a>
+  <a href="https://www.prisma.io/" target="_blank" rel="noreferrer">
+    <img src="./assets/icons/prisma.png" alt="Prisma" width="40" height="40">
+  </a>
+  <a href="https://webrtc.org/" target="_blank" rel="noreferrer">
+    <img src="./assets/icons/webrtc.png" alt="WebRTC" width="40" height="40">
+  </a>
+  <a href="https://developer.mozilla.org/en-US/docs/Web/API/WebSockets" target="_blank" rel="noreferrer">
+    <img src="./assets/icons/websocket.png" alt="WebSocket" width="40" height="40">
+  </a>
+  <a href="https://github.com/yjs" target="_blank" rel="noreferrer">
+    <img src="./assets/icons/crdts-yjs.png" alt="CRDTs (Yjs)" width="40" height="40">
+  </a>
+  <a href="https://jwt.io/" target="_blank" rel="noreferrer">
+    <img src="./assets/icons/jwt.png" alt="JWT" width="40" height="40">
+  </a>
+  <a href="https://git-scm.com/" target="_blank" rel="noreferrer">
+    <img src="./assets/icons/git.png" alt="Git" width="40" height="40">
+  </a>
+  <a href="https://github.com/" target="_blank" rel="noreferrer">
+    <img src="./assets/icons/github.png" alt="GitHub" width="40" height="40">
+  </a>
+  <a href="https://www.postman.com/" target="_blank" rel="noreferrer">
+    <img src="./assets/icons/postman.png" alt="Postman" width="40" height="40">
+  </a>
+</->
 
 ## Flow Chart
 
