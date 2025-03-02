@@ -112,31 +112,7 @@ Traditional real-time document editors face significant challenges due to high l
 
 ## Flow Chart
 
-```mermaid
----
-config:
-  look: classic
-  theme: base
-  themeVariables:
-    primaryColor: '#E2EAF4'
-    edgeLabelBackground: '#fff'
-    lineColor: '#010101'
----
-flowchart LR;
-    A[Landing Page] --> B{IsAuthenticated?};
-    B -- False --> K[Login / Register Page];
-    A --> I[Terms & Conditions];
-    A --> J[Privacy Policy];
-    B -- True --> C[Home Page];
-    K --> C;
-    C --> L[Logout];
-    L --> A;
-    C --> D[Create Document];
-    C --> E[View Document];
-    C --> F[Profile];
-    D --> G[Collaborate];
-    E --> G;
-```
+![Flow Chart](./assets/images/flow_chart.png)
 
 ## Prototype
 
