@@ -108,7 +108,7 @@ Traditional real-time document editors face significant challenges due to high l
   <a href="https://www.postman.com/" target="_blank" rel="noreferrer">
     <img src="./assets/icons/postman.png" alt="Postman" width="40" height="40">
   </a>
-</->
+</p>
 
 ## Flow Chart
 
