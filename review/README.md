@@ -71,73 +71,53 @@ Traditional real-time document editors face significant challenges due to high l
 
 ## Tools & Frameworks
 
-<style>
-  .icon-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1.5rem;
-    align-items: center;
-  }
-  .icon-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-  }
-  .icon-item img {
-    height: 50px;
-    /* width: 50px; */
-    margin-bottom: 5px;
-  }
-</style>
-
-<div class="icon-container">
-  <div class="icon-item">
-    <img src="./assets/icons/nextjs.png" alt="Next.js">
+<div style="display: flex; flex-wrap: wrap; gap: 1.5rem; align-items: center;">
+  <div style="display: flex; flex-direction: column; align-items: center; text-align: center;">
+    <img src="./assets/icons/nextjs.png" alt="Next.js" height="50">
     <span>Next.js</span>
   </div>
-  <div class="icon-item">
-    <img src="./assets/icons/typescript.png" alt="TypeScript">
+  <div style="display: flex; flex-direction: column; align-items: center; text-align: center;">
+    <img src="./assets/icons/typescript.png" alt="TypeScript" height="50">
     <span>TypeScript</span>
   </div>
-  <div class="icon-item">
-    <img src="./assets/icons/tailwindcss.png" alt="Tailwind CSS">
+  <div style="display: flex; flex-direction: column; align-items: center; text-align: center;">
+    <img src="./assets/icons/tailwindcss.png" alt="Tailwind CSS" height="50">
     <span>Tailwind CSS</span>
   </div>
-  <div class="icon-item">
-    <img src="./assets/icons/postgresql.png" alt="PostgreSQL">
+  <div style="display: flex; flex-direction: column; align-items: center; text-align: center;">
+    <img src="./assets/icons/postgresql.png" alt="PostgreSQL" height="50">
     <span>PostgreSQL</span>
   </div>
-  <div class="icon-item">
-    <img src="./assets/icons/prisma.png" alt="Prisma">
+  <div style="display: flex; flex-direction: column; align-items: center; text-align: center;">
+    <img src="./assets/icons/prisma.png" alt="Prisma" height="50">
     <span>Prisma</span>
   </div>
-  <div class="icon-item">
-    <img src="./assets/icons/webrtc.png" alt="WebRTC">
+  <div style="display: flex; flex-direction: column; align-items: center; text-align: center;">
+    <img src="./assets/icons/webrtc.png" alt="WebRTC" height="50">
     <span>WebRTC</span>
   </div>
-  <div class="icon-item">
-    <img src="./assets/icons/websocket.png" alt="WebSocket">
+  <div style="display: flex; flex-direction: column; align-items: center; text-align: center;">
+    <img src="./assets/icons/websocket.png" alt="WebSocket" height="50">
     <span>WebSocket</span>
   </div>
-  <div class="icon-item">
-    <img src="./assets/icons/crdts-yjs.png" alt="CRDTs (Yjs)">
+  <div style="display: flex; flex-direction: column; align-items: center; text-align: center;">
+    <img src="./assets/icons/crdts-yjs.png" alt="CRDTs (Yjs)" height="50">
     <span>CRDTs (Yjs)</span>
   </div>
-  <div class="icon-item">
-    <img src="./assets/icons/jwt.png" alt="JWT">
+  <div style="display: flex; flex-direction: column; align-items: center; text-align: center;">
+    <img src="./assets/icons/jwt.png" alt="JWT" height="50">
     <span>JWT</span>
   </div>
-  <div class="icon-item">
-    <img src="./assets/icons/git.png" alt="Git">
+  <div style="display: flex; flex-direction: column; align-items: center; text-align: center;">
+    <img src="./assets/icons/git.png" alt="Git" height="50">
     <span>Git</span>
   </div>
-  <div class="icon-item">
-    <img src="./assets/icons/github.png" alt="GitHub">
+  <div style="display: flex; flex-direction: column; align-items: center; text-align: center;">
+    <img src="./assets/icons/github.png" alt="GitHub" height="50">
     <span>GitHub</span>
   </div>
-  <div class="icon-item">
-    <img src="./assets/icons/postman.png" alt="Postman">
+  <div style="display: flex; flex-direction: column; align-items: center; text-align: center;">
+    <img src="./assets/icons/postman.png" alt="Postman" height="50">
     <span>Postman</span>
   </div>
 </div>
