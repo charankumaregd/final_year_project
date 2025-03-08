@@ -16,7 +16,7 @@ export const passwordSchema = z
 
 export const verificationCodeSchema = z
   .string()
-  .length(6, "OTP must be 6 digits");
+  .length(6, "Verification code must be 6 digits");
 
 export const loginSchema = z.object({
   email: emailSchema,
@@ -27,10 +27,6 @@ export const registerSchema = loginSchema.extend({
   name: nameSchema,
 });
 
-export type LoginFormValues = z.infer<typeof loginSchema>;
-
-export type RegisterFormValues = z.infer<typeof registerSchema>;
-
 export const verifyEmailSchema = z.object({
   email: emailSchema,
   verificationCode: verificationCodeSchema,
@@ -39,3 +35,17 @@ export const verifyEmailSchema = z.object({
 export const resetPasswordSchema = verifyEmailSchema.extend({
   newPassword: passwordSchema,
 });
+
+export const getEmailSchema = z.object({
+  email: emailSchema,
+});
+
+export type LoginFormValues = z.infer<typeof loginSchema>;
+
+export type RegisterFormValues = z.infer<typeof registerSchema>;
+
+export type VerifyEmailFormValues = z.infer<typeof verifyEmailSchema>;
+
+export type GetEmailFormValues = z.infer<typeof getEmailSchema>;
+
+export type ResetPasswordFormValues = z.infer<typeof resetPasswordSchema>;

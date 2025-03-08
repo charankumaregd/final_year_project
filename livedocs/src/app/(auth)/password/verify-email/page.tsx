@@ -1,9 +1,9 @@
-import RegisterForm from "@/components/forms/RegisterForm";
+import VerifyEmailForm from "@/components/forms/VerifyEmailForm";
 
 export default function Register() {
   return (
     <div className="flex flex-col items-center justify-center space-y-8 w-full">
-      <RegisterForm />
+      <VerifyEmailForm redirectTo="/password/reset" />
     </div>
   );
 }
