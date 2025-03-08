@@ -26,12 +26,12 @@ export async function POST(req: Request) {
       data: { name, email, password: hashedPassword },
     });
 
-    const otp = randomInt(100000, 999999).toString();
+    const verificationCode = randomInt(100000, 999999).toString();
 
     await prisma.verificationCode.create({
       data: {
         userId: user.id,
-        code: otp,
+        code: verificationCode,
         type: VerificationType.EMAIL_VERIFICATION,
         expiresAt: new Date(Date.now() + 15 * 60 * 1000),
       },
@@ -40,12 +40,12 @@ export async function POST(req: Request) {
     await sendMail({
       to: user.email,
       subject: "Verify Your Email - LiveDocs",
-      text: `Your OTP code is: ${otp}. It expires in 15 minutes.`,
-      html: `<p>Your OTP code is: ${otp}. It expires in 15 minutes</p>`,
+      text: `Your Verification code is: ${verificationCode}. It expires in 15 minutes.`,
+      html: `<p>Your Verification code is: ${verificationCode}. It expires in 15 minutes</p>`,
     });
 
     return NextResponse.json({
-      message: "User registered. Check email for OTP.",
+      message: "User registered. Check email for Verification code.",
     });
   } catch (error) {
     console.error("Register error:", error);

@@ -9,19 +9,22 @@ type sendEmailParams = {
   html: string;
 };
 
-const getFromEmail = () =>
-  process.env.NODE_ENV === "development"
+function getFromEmail() {
+  return process.env.NODE_ENV === "development"
     ? "onboarding@resend.dev"
     : (process.env.EMAIL_SENDER as string);
+}
 
-const getToEmail = (to: string) =>
-  process.env.NODE_ENV === "development" ? "delivered@resend.dev" : to;
+function getToEmail(to: string) {
+  return process.env.NODE_ENV === "development" ? "delivered@resend.dev" : to;
+}
 
-export const sendMail = async ({ to, subject, text, html }: sendEmailParams) =>
-  await resend.emails.send({
+export async function sendMail({ to, subject, text, html }: sendEmailParams) {
+  return await resend.emails.send({
     from: getFromEmail(),
     to: getToEmail(to),
     subject,
     text,
     html,
   });
+}

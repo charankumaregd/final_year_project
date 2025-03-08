@@ -2,12 +2,14 @@ import { z } from "zod";
 
 export const nameSchema = z
   .string()
+  .trim()
   .min(2, "Name must be at least 2 characters");
 
 export const emailSchema = z.string().email("Invalid email address");
 
 export const passwordSchema = z
   .string()
+  .trim()
   .min(8, "Password must be at least 8 characters")
   .regex(/[A-Z]/, "Must include at least one uppercase letter")
   .regex(/[a-z]/, "Must include at least one lowercase letter")
@@ -16,7 +18,9 @@ export const passwordSchema = z
 
 export const verificationCodeSchema = z
   .string()
-  .length(6, "Verification code must be 6 digits");
+  .trim()
+  .length(6, "Verification code must be 6 digits")
+  .regex(/^\d{6}$/, "Verification code must be numeric");
 
 export const loginSchema = z.object({
   email: emailSchema,
