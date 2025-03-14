@@ -45,7 +45,7 @@ model VerificationCode {
 model Session {
   id           String   @id @default(uuid())
   userId       String   
-  userAgent    String?   
+  userAgent    String   
   createdAt    DateTime @default(now())
   expiresAt    DateTime 
 

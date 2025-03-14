@@ -1,5 +1,6 @@
 import { api } from "@/lib/api";
 import { useState, useEffect } from "react";
+import { toast } from "sonner";
 
 interface Session {
   id: string;
@@ -11,7 +12,6 @@ interface Session {
 export default function useSession() {
   const [sessions, setSessions] = useState<Session[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
   const [deleting, setDeleting] = useState<string | null>(null);
 
   async function fetchSessions() {
@@ -36,9 +36,9 @@ export default function useSession() {
       setSessions(sessions);
     } catch (error: unknown) {
       if (error instanceof Error) {
-        setError(error.message);
+        toast.error(error.message);
       } else {
-        setError("An unknown error occurred");
+        toast.error("An unknown error occurred");
       }
     } finally {
       setLoading(false);
@@ -63,9 +63,9 @@ export default function useSession() {
       );
     } catch (error: unknown) {
       if (error instanceof Error) {
-        setError(error.message);
+        toast.error(error.message);
       } else {
-        setError("An unknown error occurred");
+        toast.error("An unknown error occurred");
       }
     } finally {
       setDeleting(null);
@@ -76,5 +76,5 @@ export default function useSession() {
     fetchSessions();
   }, []);
 
-  return { sessions, loading, error, deleteSession, deleting };
+  return { sessions, loading, deleteSession, deleting };
 }

@@ -2,36 +2,12 @@
 
 import { Button } from "@/components/ui/button";
 import { LoaderCircle } from "lucide-react";
-import useAuth from "@/hooks/useAuth";
-import { useState } from "react";
+import useUser from "@/hooks/useUser";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
-import { api } from "@/lib/api";
 
 export default function Profile() {
-  const { user, loading, isAuthenticated } = useAuth();
-  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const { user, loading, isAuthenticated, logout, isLoggingOut } = useUser();
   const router = useRouter();
-
-  const handleLogout = async () => {
-    try {
-      setIsLoggingOut(true);
-
-      await api("/api/logout");
-
-      toast.success("Logged out successfully");
-
-      router.replace("/login");
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        toast.error(error.message);
-      } else {
-        toast.error("An error occurred");
-      }
-    } finally {
-      setIsLoggingOut(false);
-    }
-  };
 
   if (loading) {
     return (
@@ -55,7 +31,7 @@ export default function Profile() {
       <p>
         <span>Email:</span> {user.email}
       </p>
-      <Button onClick={handleLogout} disabled={isLoggingOut}>
+      <Button onClick={logout} disabled={isLoggingOut}>
         {isLoggingOut ? <LoaderCircle className="animate-spin" /> : "Logout"}
       </Button>
     </main>

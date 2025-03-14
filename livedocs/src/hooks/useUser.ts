@@ -1,5 +1,7 @@
 import { api } from "@/lib/api";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 interface User {
   id: string;
@@ -9,11 +11,12 @@ interface User {
   createdAt: string;
 }
 
-export default function useAuth() {
+export default function useUser() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const router = useRouter();
 
   async function fetchUser() {
     try {
@@ -32,12 +35,32 @@ export default function useAuth() {
       setIsAuthenticated(false);
 
       if (error instanceof Error) {
-        setError(error.message);
+        toast.error(error.message);
       } else {
-        setError("An unknown error occurred");
+        toast.error("An unknown error occurred");
       }
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function logout() {
+    try {
+      setIsLoggingOut(true);
+
+      await api("/api/logout");
+
+      toast.success("Logged out successfully");
+
+      router.replace("/login");
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("An error occurred");
+      }
+    } finally {
+      setIsLoggingOut(false);
     }
   }
 
@@ -45,5 +68,5 @@ export default function useAuth() {
     fetchUser();
   }, []);
 
-  return { user, loading, error, isAuthenticated };
+  return { user, loading, isAuthenticated, logout, isLoggingOut };
 }

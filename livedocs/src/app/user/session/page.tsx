@@ -13,32 +13,13 @@ import { Button } from "@/components/ui/button";
 import useSession from "@/hooks/useSession";
 
 export default function Sessions() {
-  const { sessions, loading, error, deleteSession, deleting } = useSession();
+  const { sessions, loading, deleteSession, deleting } = useSession();
 
   if (loading) {
     return (
-      <main>
-        <h1>My Sessions</h1>
+      <div className="flex justify-center items-center h-screen">
         <LoaderCircle className="animate-spin" />
-      </main>
-    );
-  }
-
-  if (error) {
-    return (
-      <main>
-        <h1>My Sessions</h1>
-        <p>Error {error}</p>
-      </main>
-    );
-  }
-
-  if (sessions.length === 0) {
-    return (
-      <main>
-        <h1>My Sessions</h1>
-        <p>No active sessions found.</p>
-      </main>
+      </div>
     );
   }
 
@@ -46,34 +27,40 @@ export default function Sessions() {
     <main>
       <h1>My Sessions</h1>
 
-      {sessions.map((session) => (
-        <Card key={session.id}>
-          <CardHeader>
-            <CardTitle>
-              <span>{new Date(session.createdAt).toLocaleString("en-US")}</span>
-              <span>{session.isCurrent && " (current session)"}</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <CardDescription>{session.userAgent}</CardDescription>
-          </CardContent>
-          <CardFooter>
+      {sessions.length === 0 ? (
+        <p>No active sessions found.</p>
+      ) : (
+        sessions.map((session) => (
+          <Card key={session.id}>
+            <CardHeader>
+              <CardTitle>
+                <span>
+                  {new Date(session.createdAt).toLocaleString("en-US")}
+                </span>
+                <span>{session.isCurrent && " (current session)"}</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <CardDescription>{session.userAgent}</CardDescription>
+            </CardContent>
             {!session.isCurrent && (
-              <Button
-                variant="destructive"
-                onClick={() => deleteSession(session.id)}
-                disabled={deleting === session.id}
-              >
-                {deleting === session.id ? (
-                  <LoaderCircle className="animate-spin" />
-                ) : (
-                  "Delete"
-                )}
-              </Button>
+              <CardFooter>
+                <Button
+                  variant="destructive"
+                  onClick={() => deleteSession(session.id)}
+                  disabled={deleting === session.id}
+                >
+                  {deleting === session.id ? (
+                    <LoaderCircle className="animate-spin" />
+                  ) : (
+                    "Delete"
+                  )}
+                </Button>
+              </CardFooter>
             )}
-          </CardFooter>
-        </Card>
-      ))}
+          </Card>
+        ))
+      )}
     </main>
   );
 }
