@@ -14,34 +14,72 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { useState, useEffect } from "react";
+import { LoaderCircle } from "lucide-react";
 
 export default function ResetPasswordForm() {
   const router = useRouter();
-
-  const email = "sample@email.com";
-  const verificationCode = "121212";
+  const [email, setEmail] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const form = useForm<ResetPasswordFormValues>({
     resolver: zodResolver(resetPasswordSchema),
     defaultValues: {
       email: email,
-      verificationCode: verificationCode,
       newPassword: "",
     } as ResetPasswordFormValues,
     mode: "onTouched",
   });
 
-  function onSubmit(values: ResetPasswordFormValues) {
-    alert(JSON.stringify(values, null, 2));
+  useEffect(() => {
+    const storedEmail = sessionStorage.getItem("resetPasswordEmail");
+    if (storedEmail) {
+      setEmail(storedEmail);
+      form.reset({ email: storedEmail });
+    } else {
+      setTimeout(() => {
+        toast.error("No email found. Please provide again.");
+        router.replace("/password/forgot");
+      }, 100);
+    }
+  }, [form, router]);
 
-    router.replace("/user");
+  async function onSubmit(formData: ResetPasswordFormValues) {
+    setLoading(true);
+    try {
+      const response = await fetch("/api/password/reset", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        const { error } = await response.json();
+        toast.error(`Error: ${error}`);
+        return;
+      }
+
+      const { message } = await response.json();
+      toast.success(message);
+
+      sessionStorage.removeItem("resetPasswordEmail");
+
+      router.replace("/login");
+    } catch (error) {
+      toast.error(`Error: ${error}`);
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="border rounded-md p-8 space-y-4 w-full max-w-sm"
+        className="border rounded-md p-8 space-y-4 w-full max-w-sm shadow-lg"
       >
         <div className="flex flex-col items-center justify-center text-center space-y-2">
           <h2 className="text-lg font-medium">Reset Password</h2>
@@ -72,9 +110,13 @@ export default function ResetPasswordForm() {
         <Button
           type="submit"
           className="mt-4 w-full"
-          disabled={!form.formState.isValid}
+          disabled={!form.formState.isValid || loading}
         >
-          Reset Password
+          {loading ? (
+            <LoaderCircle className="animate-spin" />
+          ) : (
+            "Reset Password"
+          )}
         </Button>
       </form>
     </Form>

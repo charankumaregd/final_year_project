@@ -1,76 +1,61 @@
-import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { NextRequest, NextResponse } from "next/server";
 import {
   verifyRefreshToken,
   generateAccessToken,
   generateRefreshToken,
 } from "@/lib/jwt";
+import { getSessionById, refreshSessionExpiresAt } from "@/services/session";
+import { setAccessToken, setRefreshToken } from "@/lib/cookies";
 
-export async function POST(req: Request) {
+export async function GET(request: NextRequest) {
   try {
-    const body = await req.json();
-    const { refreshToken } = body;
+    const refreshToken = request.cookies.get("refreshToken")?.value;
 
     if (!refreshToken) {
       return NextResponse.json(
-        { error: "Refresh token required" },
-        { status: 400 }
-      );
-    }
-
-    const decoded = verifyRefreshToken(refreshToken);
-    if (!decoded || typeof decoded !== "object" || !decoded.userId) {
-      return NextResponse.json(
-        { error: "Invalid refresh token" },
+        { error: "Refresh token missing" },
         { status: 401 }
       );
     }
 
-    const { userId } = decoded;
+    const payload = await verifyRefreshToken(refreshToken);
 
-    const session = await prisma.session.findFirst({
-      where: { userId, refreshToken },
-    });
-
-    if (!session) {
-      return NextResponse.json({ error: "Invalid session" }, { status: 403 });
+    if (!payload) {
+      return NextResponse.json(
+        { error: "Invalid or expired refresh token" },
+        { status: 403 }
+      );
     }
 
-    const user = await prisma.user.findUnique({ where: { id: userId } });
-    if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    const session = await getSessionById(payload.sessionId);
+
+    if (!session || session.expiresAt.getTime() < Date.now()) {
+      return NextResponse.json({ error: "Session expired" }, { status: 403 });
     }
 
-    const newAccessToken = generateAccessToken(user.id, user.email);
-    const newRefreshToken = generateRefreshToken(user.id);
+    const sessionNeedsRefresh =
+      session.expiresAt.getTime() - Date.now() <= 24 * 60 * 60 * 1000;
 
-    await prisma.session.update({
-      where: { id: session.id },
-      data: {
-        refreshToken: newRefreshToken,
-        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-      },
-    });
+    if (sessionNeedsRefresh) {
+      await refreshSessionExpiresAt(payload.sessionId);
+    }
 
-    const response = NextResponse.json({
-      message: "Token refreshed sucessfully",
-    });
+    const accessToken = await generateAccessToken(
+      payload.userId,
+      payload.sessionId
+    );
 
-    response.cookies.set("accessToken", newAccessToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      path: "/",
-      maxAge: 15 * 60,
-    });
+    const newRefreshToken = sessionNeedsRefresh
+      ? await generateRefreshToken(payload.userId, payload.sessionId)
+      : undefined;
 
-    response.cookies.set("refreshToken", newRefreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      path: "/auth/refresh",
-      maxAge: 7 * 24 * 60 * 60,
-    });
+    const response = NextResponse.json({ message: "Access token refreshed" });
+
+    setAccessToken(response, accessToken);
+
+    if (newRefreshToken) {
+      setRefreshToken(response, newRefreshToken);
+    }
 
     return response;
   } catch (error) {

@@ -17,15 +17,18 @@ import {
   InputOTPSlot,
 } from "@/components/ui/input-otp";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { useState, useEffect } from "react";
+import { LoaderCircle } from "lucide-react";
 
 interface VerifyEmailFormProps {
-  redirectTo: string;
+  type: string;
 }
 
-export default function VerifyEmailForm({ redirectTo }: VerifyEmailFormProps) {
+export default function VerifyEmailForm({ type }: VerifyEmailFormProps) {
   const router = useRouter();
-
-  const email = "sample@email.com";
+  const [email, setEmail] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const form = useForm<VerifyEmailFormValues>({
     resolver: zodResolver(verifyEmailSchema),
@@ -36,21 +39,98 @@ export default function VerifyEmailForm({ redirectTo }: VerifyEmailFormProps) {
     mode: "onTouched",
   });
 
-  function onSubmit(values: VerifyEmailFormValues) {
-    alert(JSON.stringify(values, null, 2));
+  useEffect(() => {
+    const storedEmail = sessionStorage.getItem(
+      type === "register" ? "registerEmail" : "verificationEmail"
+    );
+    if (storedEmail) {
+      setEmail(storedEmail);
+      form.reset({ email: storedEmail });
+    } else {
+      setTimeout(() => {
+        if (type === "register") {
+          toast.error("No email found. Please register again.");
+          router.replace("/register");
+        } else {
+          toast.error("No email found. Please provide again.");
+          router.replace("/password/forgot");
+        }
+      }, 100);
+    }
+  }, [form, router, type]);
 
-    router.replace(redirectTo);
+  async function onSubmit(formData: VerifyEmailFormValues) {
+    setLoading(true);
+    try {
+      const response = await fetch(`/api/${type}/verify-email`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        const { error } = await response.json();
+        toast.error(`Error: ${error}`);
+        return;
+      }
+
+      const { message } = await response.json();
+      toast.success(message);
+
+      sessionStorage.removeItem(
+        type === "register" ? "registerEmail" : "verificationEmail"
+      );
+
+      if (type === "password") {
+        sessionStorage.setItem("resetPasswordEmail", formData.email);
+      }
+
+      router.replace(type === "register" ? "/user" : "/password/reset");
+    } catch (error) {
+      toast.error(`Error: ${error}`);
+    } finally {
+      setLoading(false);
+    }
   }
 
-  function resendCode() {
-    alert("Code resent!");
+  async function resendCode() {
+    try {
+      const response = await fetch(`/api/${type}/verify-email/resend`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      if (!response.ok) {
+        const { error } = await response.json();
+        toast.error(`Error: ${error}`);
+        return;
+      }
+
+      const { message } = await response.json();
+      toast.success(message);
+    } catch (error) {
+      toast.error(`Error: ${error}`);
+    }
+  }
+
+  if (!email) {
+    return (
+      <div className="flex items-center justify-center">
+        <LoaderCircle className="animate-spin" />
+      </div>
+    );
   }
 
   return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="border rounded-md p-8 space-y-4 w-full max-w-sm"
+        className="border rounded-md p-8 space-y-4 w-full max-w-sm shadow-lg"
       >
         <div className="flex flex-col items-center justify-center text-center space-y-2">
           <h2 className="text-lg font-medium">Verify your email</h2>
@@ -70,24 +150,11 @@ export default function VerifyEmailForm({ redirectTo }: VerifyEmailFormProps) {
               <FormItem>
                 <FormControl>
                   <InputOTP maxLength={6} {...field}>
-                    <InputOTPGroup>
-                      <InputOTPSlot index={0} />
-                    </InputOTPGroup>
-                    <InputOTPGroup>
-                      <InputOTPSlot index={1} />
-                    </InputOTPGroup>
-                    <InputOTPGroup>
-                      <InputOTPSlot index={2} />
-                    </InputOTPGroup>
-                    <InputOTPGroup>
-                      <InputOTPSlot index={3} />
-                    </InputOTPGroup>
-                    <InputOTPGroup>
-                      <InputOTPSlot index={4} />
-                    </InputOTPGroup>
-                    <InputOTPGroup>
-                      <InputOTPSlot index={5} />
-                    </InputOTPGroup>
+                    {[...Array(6)].map((_, index) => (
+                      <InputOTPGroup key={index}>
+                        <InputOTPSlot index={index} />
+                      </InputOTPGroup>
+                    ))}
                   </InputOTP>
                 </FormControl>
                 <FormMessage className="text-xs" />
@@ -99,9 +166,9 @@ export default function VerifyEmailForm({ redirectTo }: VerifyEmailFormProps) {
         <Button
           type="submit"
           className="mt-4 w-full"
-          disabled={!form.formState.isValid}
+          disabled={!form.formState.isValid || loading}
         >
-          Continue
+          {loading ? <LoaderCircle className="animate-spin" /> : "Continue"}
         </Button>
 
         <div className="flex flex-col items-center justify-center text-center space-y-2">

@@ -36,12 +36,12 @@ export const verifyEmailSchema = z.object({
   verificationCode: verificationCodeSchema,
 });
 
-export const resetPasswordSchema = verifyEmailSchema.extend({
-  newPassword: passwordSchema,
-});
-
 export const getEmailSchema = z.object({
   email: emailSchema,
+});
+
+export const resetPasswordSchema = getEmailSchema.extend({
+  newPassword: passwordSchema,
 });
 
 export type LoginFormValues = z.infer<typeof loginSchema>;

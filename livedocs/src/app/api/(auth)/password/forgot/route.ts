@@ -1,6 +1,6 @@
-import { registerSchema } from "@/lib/zod";
+import { getEmailSchema } from "@/lib/zod";
 import { NextRequest, NextResponse } from "next/server";
-import { createUser, getUserByEmail } from "@/services/user";
+import { getUserByEmail } from "@/services/user";
 import { createVerificationCode } from "@/services/verificationCode";
 import { sendVerificationCodeMail } from "@/lib/resend";
 
@@ -8,18 +8,13 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
-    const { name, email, password } = registerSchema.parse(body);
+    const { email } = getEmailSchema.parse(body);
 
-    const existingUser = await getUserByEmail(email);
+    const user = await getUserByEmail(email);
 
-    if (existingUser) {
-      return NextResponse.json(
-        { error: "User with this email already exists" },
-        { status: 409 }
-      );
+    if (!user) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
-
-    const user = await createUser(name, email, password);
 
     const { code } = await createVerificationCode(
       user.id,
@@ -29,10 +24,10 @@ export async function POST(request: NextRequest) {
     await sendVerificationCodeMail(email, code);
 
     return NextResponse.json({
-      message: "User registered. Check your email for the verification code.",
+      message: "Check your email for the verification code.",
     });
   } catch (error) {
-    console.error("Register error:", error);
+    console.error("Email error:", error);
 
     return NextResponse.json(
       { error: "Something went wrong" },

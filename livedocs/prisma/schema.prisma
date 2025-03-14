@@ -32,8 +32,8 @@ model VerificationCode {
   userId    String          
   code      String           @db.VarChar(6)
   type      VerificationType 
-  expiresAt DateTime         
   createdAt DateTime         @default(now())
+  expiresAt DateTime         
 
   user      User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -45,9 +45,9 @@ model VerificationCode {
 model Session {
   id           String   @id @default(uuid())
   userId       String   
-  refreshToken String   @unique @db.Text
-  expiresAt    DateTime 
+  userAgent    String?   
   createdAt    DateTime @default(now())
+  expiresAt    DateTime 
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 

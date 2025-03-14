@@ -1,27 +1,49 @@
-import jwt from "jsonwebtoken";
+import { JWTPayload, SignJWT, jwtVerify } from "jose";
 
-const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET!;
-const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET!;
+const ACCESS_TOKEN_SECRET = new TextEncoder().encode(
+  process.env.ACCESS_TOKEN_SECRET!
+);
+const REFRESH_TOKEN_SECRET = new TextEncoder().encode(
+  process.env.REFRESH_TOKEN_SECRET!
+);
 
-export function generateAccessToken(userId: string, email: string) {
-  return jwt.sign({ userId, email }, ACCESS_TOKEN_SECRET, { expiresIn: "15m" });
+interface JwtPayload extends JWTPayload {
+  userId: string;
+  sessionId: string;
 }
 
-export function generateRefreshToken(userId: string) {
-  return jwt.sign({ userId }, REFRESH_TOKEN_SECRET, { expiresIn: "7d" });
+export async function generateAccessToken(userId: string, sessionId: string) {
+  return new SignJWT({ userId, sessionId })
+    .setProtectedHeader({ alg: "HS256" })
+    .setExpirationTime("15m")
+    .sign(ACCESS_TOKEN_SECRET);
 }
 
-export function verifyAccessToken(token: string) {
+export async function generateRefreshToken(userId: string, sessionId: string) {
+  return new SignJWT({ userId, sessionId })
+    .setProtectedHeader({ alg: "HS256" })
+    .setExpirationTime("7d")
+    .sign(REFRESH_TOKEN_SECRET);
+}
+
+export async function verifyAccessToken(
+  token: string
+): Promise<JwtPayload | null> {
   try {
-    return jwt.verify(token, ACCESS_TOKEN_SECRET);
-  } catch {
+    const { payload } = await jwtVerify(token, ACCESS_TOKEN_SECRET);
+    return payload as JwtPayload;
+  } catch (error) {
+    console.log(`Error in verifying: ${error}`);
     return null;
   }
 }
 
-export function verifyRefreshToken(token: string) {
+export async function verifyRefreshToken(
+  token: string
+): Promise<JwtPayload | null> {
   try {
-    return jwt.verify(token, REFRESH_TOKEN_SECRET);
+    const { payload } = await jwtVerify(token, REFRESH_TOKEN_SECRET);
+    return payload as JwtPayload;
   } catch {
     return null;
   }
