@@ -49,14 +49,10 @@ export default function useSession() {
     try {
       setDeleting(sessionId);
 
-      const response = await fetch(`/api/session/${sessionId}`, {
+      await api(`/api/session/${sessionId}`, {
         method: "DELETE",
         credentials: "include",
       });
-
-      if (!response.ok) {
-        throw new Error("Failed to delete session");
-      }
 
       setSessions((prevSessions) =>
         prevSessions.filter((session) => session.id !== sessionId)

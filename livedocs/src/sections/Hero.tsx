@@ -1,9 +1,13 @@
+"use client";
+
 import { ArrowRight, FileEdit } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import useAuth from "@/hooks/useAuth";
 
 export default function Hero() {
+  const { isAuthenticated } = useAuth();
   return (
     <section id="#" className="space-y-8 pt-8 md:pt-12">
       <div className="flex flex-col items-center justify-center text-center space-y-8">
@@ -23,12 +27,22 @@ export default function Hero() {
         </div>
       </div>
       <div className="flex flex-col md:flex-row items-center justify-center gap-4">
-        <Link href="/register">
-          <Button variant="default" size="lg">
-            <span>Get Started</span>
-            <ArrowRight />
-          </Button>
-        </Link>
+        {!isAuthenticated && (
+          <Link href="/register">
+            <Button variant="default" size="lg">
+              <span>Get Started</span>
+              <ArrowRight />
+            </Button>
+          </Link>
+        )}
+        {isAuthenticated && (
+          <Link href="/user/document">
+            <Button variant="default" size="lg">
+              <span>Go to My Documents</span>
+              <ArrowRight />
+            </Button>
+          </Link>
+        )}
       </div>
       <div className="flex items-center justify-center pt-8">
         <div className="bg-secondary border p-2 w-4xl h-96 rounded-2xl"></div>

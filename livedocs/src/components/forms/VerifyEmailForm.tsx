@@ -20,6 +20,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useState, useEffect } from "react";
 import { LoaderCircle } from "lucide-react";
+import { api } from "@/lib/api";
 
 interface VerifyEmailFormProps {
   type: string;
@@ -62,19 +63,13 @@ export default function VerifyEmailForm({ type }: VerifyEmailFormProps) {
   async function onSubmit(formData: VerifyEmailFormValues) {
     setLoading(true);
     try {
-      const response = await fetch(`/api/${type}/verify-email`, {
+      const response = await api(`/api/${type}/verify-email`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(formData),
       });
-
-      if (!response.ok) {
-        const { error } = await response.json();
-        toast.error(`Error: ${error}`);
-        return;
-      }
 
       const { message } = await response.json();
       toast.success(message);
@@ -83,13 +78,21 @@ export default function VerifyEmailForm({ type }: VerifyEmailFormProps) {
         type === "register" ? "registerEmail" : "verificationEmail"
       );
 
+      if (type === "register") {
+        localStorage.setItem("isAuthenticated", "true");
+      }
+
       if (type === "password") {
         sessionStorage.setItem("resetPasswordEmail", formData.email);
       }
 
       router.replace(type === "register" ? "/user" : "/password/reset");
-    } catch (error) {
-      toast.error(`Error: ${error}`);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("An unknown error occurred");
+      }
     } finally {
       setLoading(false);
     }
@@ -97,7 +100,7 @@ export default function VerifyEmailForm({ type }: VerifyEmailFormProps) {
 
   async function resendCode() {
     try {
-      const response = await fetch(`/api/${type}/verify-email/resend`, {
+      const response = await api(`/api/${type}/verify-email/resend`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -105,16 +108,14 @@ export default function VerifyEmailForm({ type }: VerifyEmailFormProps) {
         body: JSON.stringify({ email }),
       });
 
-      if (!response.ok) {
-        const { error } = await response.json();
-        toast.error(`Error: ${error}`);
-        return;
-      }
-
       const { message } = await response.json();
       toast.success(message);
-    } catch (error) {
-      toast.error(`Error: ${error}`);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("An unknown error occurred");
+      }
     }
   }
 

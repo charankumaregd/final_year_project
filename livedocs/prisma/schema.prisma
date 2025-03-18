@@ -12,6 +12,18 @@ enum VerificationType {
   PASSWORD_RESET
 }
 
+enum AccessRole {
+  VIEWER
+  EDITOR
+  OWNER
+}
+
+enum NotificationType {
+  COMMENT
+  COLLAB_INVITE
+  ROLE_CHANGED
+}
+
 model User {
   id            String   @id @default(uuid())
   name          String
@@ -21,8 +33,13 @@ model User {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
-  sessions          Session[]
-  verificationCodes VerificationCode[]
+  sessions          Session[]       @relation("UserSessions")
+  verificationCodes VerificationCode[] @relation("UserVerificationCodes")
+  documents         Document[]       @relation("UserDocuments")
+  accesses          DocumentAccess[] @relation("UserAccesses")
+  comments          Comment[]        @relation("UserComments")
+  sentNotifications Notification[]   @relation("SenderNotifications")
+  receivedNotifications Notification[] @relation("ReceiverNotifications")
 
   @@index([email]) 
 }
@@ -35,7 +52,7 @@ model VerificationCode {
   createdAt DateTime         @default(now())
   expiresAt DateTime         
 
-  user      User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      User @relation("UserVerificationCodes", fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, type]) 
   @@index([expiresAt]) 
@@ -49,7 +66,71 @@ model Session {
   createdAt    DateTime @default(now())
   expiresAt    DateTime 
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation("UserSessions", fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
+}
+
+model Document {
+  id        String          @id @default(uuid())
+  title     String
+  content   String          @db.Text
+  ownerId   String
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+
+  owner         User            @relation("UserDocuments", fields: [ownerId], references: [id], onDelete: Cascade)
+  access        DocumentAccess[] @relation("DocumentAccesses")
+  comments      Comment[]        @relation("DocumentComments")
+  notifications Notification[]   @relation("DocumentNotifications")
+
+  @@index([title])
+}
+
+model DocumentAccess {
+  id         String    @id @default(uuid())
+  documentId String   
+  userId     String
+  role       AccessRole
+  createdAt  DateTime  @default(now())
+
+  document Document @relation("DocumentAccesses", fields: [documentId], references: [id], onDelete: Cascade)
+  user     User     @relation("UserAccesses", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([documentId, userId]) 
+  @@index([userId])
+  @@index([documentId])
+}
+
+model Comment {
+  id         String   @id @default(uuid())
+  documentId String
+  userId     String
+  content    String
+  tags       String[]
+  createdAt  DateTime @default(now())
+
+  user     User     @relation("UserComments", fields: [userId], references: [id], onDelete: Cascade)
+  document Document @relation("DocumentComments", fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@index([documentId])
+  @@index([userId])
+}
+
+model Notification {
+  id         String           @id @default(uuid())
+  userId     String
+  senderId   String?
+  documentId String?
+  type       NotificationType
+  message    String
+  isRead     Boolean          @default(false)
+  createdAt  DateTime         @default(now())
+
+  user      User     @relation("ReceiverNotifications", fields: [userId], references: [id], onDelete: Cascade)
+  sender    User?    @relation("SenderNotifications", fields: [senderId], references: [id], onDelete: SetNull)
+  document  Document? @relation("DocumentNotifications", fields: [documentId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([documentId])
 }

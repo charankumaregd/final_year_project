@@ -1,10 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSessionById, deleteSession } from "@/services/session";
 
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { sessionId: string } }
-) {
+interface SessionParams {
+  params: {
+    sessionId: string;
+  };
+}
+
+export async function DELETE(request: NextRequest, { params }: SessionParams) {
   try {
     const userId = request.headers.get("userId");
 
@@ -15,7 +18,7 @@ export async function DELETE(
       );
     }
 
-    const { sessionId } = await params;
+    const sessionId = params.sessionId;
 
     if (!sessionId) {
       return NextResponse.json(

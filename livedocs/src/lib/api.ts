@@ -19,7 +19,7 @@ export async function api(
         if (!retryResponse.ok) {
           const errorData = await retryResponse.json();
           throw new Error(
-            errorData.message || "Failed to fetch data after refresh"
+            errorData.error || "Failed to fetch data after refresh"
           );
         }
 
@@ -33,7 +33,7 @@ export async function api(
     if (!response.ok) {
       const errorData = await response.json();
       throw new Error(
-        errorData.message || "An error occurred while fetching data"
+        errorData.error || "An error occurred while fetching data"
       );
     }
 

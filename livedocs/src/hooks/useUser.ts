@@ -1,6 +1,5 @@
 import { api } from "@/lib/api";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 interface User {
@@ -14,9 +13,6 @@ interface User {
 export default function useUser() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [isLoggingOut, setIsLoggingOut] = useState(false);
-  const router = useRouter();
 
   async function fetchUser() {
     try {
@@ -28,11 +24,11 @@ export default function useUser() {
 
       setUser(data.user);
 
-      setIsAuthenticated(true);
+      localStorage.setItem("isAuthenticated", "true");
     } catch (error: unknown) {
       setUser(null);
 
-      setIsAuthenticated(false);
+      localStorage.removeItem("isAuthenticated");
 
       if (error instanceof Error) {
         toast.error(error.message);
@@ -44,29 +40,9 @@ export default function useUser() {
     }
   }
 
-  async function logout() {
-    try {
-      setIsLoggingOut(true);
-
-      await api("/api/logout");
-
-      toast.success("Logged out successfully");
-
-      router.replace("/login");
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        toast.error(error.message);
-      } else {
-        toast.error("An error occurred");
-      }
-    } finally {
-      setIsLoggingOut(false);
-    }
-  }
-
   useEffect(() => {
     fetchUser();
   }, []);
 
-  return { user, loading, isAuthenticated, logout, isLoggingOut };
+  return { user, loading };
 }

@@ -18,6 +18,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useState } from "react";
 import { LoaderCircle } from "lucide-react";
+import { api } from "@/lib/api";
 
 export default function RegisterForm() {
   const router = useRouter();
@@ -32,7 +33,7 @@ export default function RegisterForm() {
   async function onSubmit(formData: RegisterFormValues) {
     setLoading(true);
     try {
-      const response = await fetch("/api/register", {
+      const response = await api("/api/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -40,20 +41,18 @@ export default function RegisterForm() {
         body: JSON.stringify(formData),
       });
 
-      if (!response.ok) {
-        const { error } = await response.json();
-        toast.error(`Error: ${error}`);
-        return;
-      }
-
       const { message } = await response.json();
       toast.success(message);
 
       sessionStorage.setItem("registerEmail", formData.email);
 
       router.replace("/register/verify-email");
-    } catch (error) {
-      toast.error(`Error: ${error}`);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("An unknown error occurred");
+      }
     } finally {
       setLoading(false);
     }

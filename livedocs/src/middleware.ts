@@ -44,5 +44,10 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/api/user/:path*", "/api/session/:path*", "/api/logout"],
+  matcher: [
+    "/api/user/:path*",
+    "/api/document/:path*",
+    "/api/session/:path*",
+    "/api/logout",
+  ],
 };

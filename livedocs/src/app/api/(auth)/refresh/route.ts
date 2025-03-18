@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
     if (!refreshToken) {
       return NextResponse.json(
         { error: "Refresh token missing" },
-        { status: 401 }
+        { status: 403 }
       );
     }
 

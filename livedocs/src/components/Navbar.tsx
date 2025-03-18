@@ -6,10 +6,12 @@ import Link from "next/link";
 import Image from "next/image";
 import { ToggleTheme } from "@/components/ToggleTheme";
 import { Button } from "@/components/ui/button";
-import { Menu, X } from "lucide-react";
+import { LoaderCircle, Menu, X } from "lucide-react";
+import useAuth from "@/hooks/useAuth";
 
 export default function Navbar() {
   const [isNavOpen, setisNavOpen] = useState(false);
+  const { isAuthenticated, logout, isLoggingOut } = useAuth();
 
   useEffect(() => {
     function handleResize() {
@@ -52,24 +54,52 @@ export default function Navbar() {
 
             <div className="flex items-center space-x-4">
               <ToggleTheme />
-              <Link href="/login">
-                <Button
-                  variant="outline"
-                  className="w-full"
-                  onClick={() => setisNavOpen(false)}
-                >
-                  Login
-                </Button>
-              </Link>
-              <Link href="/register">
-                <Button
-                  variant="default"
-                  className="w-full"
-                  onClick={() => setisNavOpen(false)}
-                >
-                  Register
-                </Button>
-              </Link>
+              {!isAuthenticated && (
+                <>
+                  <Link href="/login">
+                    <Button
+                      variant="outline"
+                      className="w-full"
+                      onClick={() => setisNavOpen(false)}
+                    >
+                      Login
+                    </Button>
+                  </Link>
+                  <Link href="/register">
+                    <Button
+                      variant="default"
+                      className="w-full"
+                      onClick={() => setisNavOpen(false)}
+                    >
+                      Register
+                    </Button>
+                  </Link>
+                </>
+              )}
+              {isAuthenticated && (
+                <>
+                  <Button
+                    variant="outline"
+                    onClick={logout}
+                    disabled={isLoggingOut}
+                  >
+                    {isLoggingOut ? (
+                      <LoaderCircle className="animate-spin" />
+                    ) : (
+                      "Logout"
+                    )}
+                  </Button>
+                  <Link href="/user/document">
+                    <Button
+                      variant="default"
+                      className="w-full"
+                      onClick={() => setisNavOpen(false)}
+                    >
+                      My Documents
+                    </Button>
+                  </Link>
+                </>
+              )}
             </div>
           </div>
 
@@ -103,24 +133,50 @@ export default function Navbar() {
             ))}
 
             <div className="flex flex-col space-y-4">
-              <Link href="/login">
-                <Button
-                  variant="outline"
-                  className="w-full"
-                  onClick={() => setisNavOpen(false)}
-                >
-                  Login
-                </Button>
-              </Link>
-              <Link href="/register">
-                <Button
-                  variant="default"
-                  className="w-full"
-                  onClick={() => setisNavOpen(false)}
-                >
-                  Register
-                </Button>
-              </Link>
+              {!isAuthenticated && (
+                <>
+                  <Link href="/login">
+                    <Button
+                      variant="outline"
+                      className="w-full"
+                      onClick={() => setisNavOpen(false)}
+                    >
+                      Login
+                    </Button>
+                  </Link>
+                  <Link href="/register">
+                    <Button
+                      variant="default"
+                      className="w-full"
+                      onClick={() => setisNavOpen(false)}
+                    >
+                      Register
+                    </Button>
+                  </Link>
+                </>
+              )}
+              {isAuthenticated && (
+                <>
+                  <Link href="/">
+                    <Button
+                      variant="outline"
+                      className="w-full"
+                      onClick={() => setisNavOpen(false)}
+                    >
+                      Logout
+                    </Button>
+                  </Link>
+                  <Link href="/">
+                    <Button
+                      variant="default"
+                      className="w-full"
+                      onClick={() => setisNavOpen(false)}
+                    >
+                      My Documents
+                    </Button>
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>

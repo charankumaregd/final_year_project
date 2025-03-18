@@ -5,7 +5,11 @@ export const nameSchema = z
   .trim()
   .min(2, "Name must be at least 2 characters");
 
-export const emailSchema = z.string().email("Invalid email address");
+export const emailSchema = z
+  .string()
+  .trim()
+  .email("Invalid email address")
+  .transform((val) => val.toLowerCase());
 
 export const passwordSchema = z
   .string()
@@ -53,3 +57,12 @@ export type VerifyEmailFormValues = z.infer<typeof verifyEmailSchema>;
 export type GetEmailFormValues = z.infer<typeof getEmailSchema>;
 
 export type ResetPasswordFormValues = z.infer<typeof resetPasswordSchema>;
+
+export const createDocumentSchema = z.object({
+  title: z.string().optional(),
+});
+
+export const updateDocumentSchema = z.object({
+  title: z.string().optional(),
+  content: z.string().optional(),
+});

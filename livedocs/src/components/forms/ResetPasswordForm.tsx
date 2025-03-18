@@ -17,6 +17,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useState, useEffect } from "react";
 import { LoaderCircle } from "lucide-react";
+import { api } from "@/lib/api";
 
 export default function ResetPasswordForm() {
   const router = useRouter();
@@ -48,7 +49,7 @@ export default function ResetPasswordForm() {
   async function onSubmit(formData: ResetPasswordFormValues) {
     setLoading(true);
     try {
-      const response = await fetch("/api/password/reset", {
+      const response = await api("/api/password/reset", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -56,20 +57,18 @@ export default function ResetPasswordForm() {
         body: JSON.stringify(formData),
       });
 
-      if (!response.ok) {
-        const { error } = await response.json();
-        toast.error(`Error: ${error}`);
-        return;
-      }
-
       const { message } = await response.json();
       toast.success(message);
 
       sessionStorage.removeItem("resetPasswordEmail");
 
       router.replace("/login");
-    } catch (error) {
-      toast.error(`Error: ${error}`);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("An unknown error occurred");
+      }
     } finally {
       setLoading(false);
     }

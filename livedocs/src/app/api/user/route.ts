@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getUserById, withoutPassword } from "@/services/user";
 
-export const GET = async (request: NextRequest) => {
+export async function GET(request: NextRequest) {
   try {
     const userId = request.headers.get("userId");
 
@@ -26,4 +26,4 @@ export const GET = async (request: NextRequest) => {
       { status: 500 }
     );
   }
-};
+}

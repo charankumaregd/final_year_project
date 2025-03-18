@@ -14,13 +14,16 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { useState } from "react";
 import { LoaderCircle } from "lucide-react";
+import { api } from "@/lib/api";
 
 export default function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectUrl = searchParams?.get("redirectUrl");
   const [loading, setLoading] = useState(false);
 
   const form = useForm<LoginFormValues>({
@@ -32,7 +35,7 @@ export default function LoginForm() {
   async function onSubmit(formData: LoginFormValues) {
     setLoading(true);
     try {
-      const response = await fetch("/api/login", {
+      const response = await api("/api/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -40,18 +43,22 @@ export default function LoginForm() {
         body: JSON.stringify(formData),
       });
 
-      if (!response.ok) {
-        const { error } = await response.json();
-        toast.error(`Error: ${error}`);
-        return;
-      }
-
       const { message } = await response.json();
       toast.success(message);
 
-      router.replace("/user");
-    } catch (error) {
-      toast.error(`Error: ${error}`);
+      localStorage.setItem("isAuthenticated", "true");
+
+      const decodedRedirectUrl = redirectUrl
+        ? decodeURIComponent(redirectUrl)
+        : "/user";
+
+      router.replace(decodedRedirectUrl);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("An unknown error occurred");
+      }
     } finally {
       setLoading(false);
     }

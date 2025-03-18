@@ -18,6 +18,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useState } from "react";
 import { LoaderCircle } from "lucide-react";
+import { api } from "@/lib/api";
 
 export default function GetEmailForm() {
   const router = useRouter();
@@ -32,7 +33,7 @@ export default function GetEmailForm() {
   async function onSubmit(formData: GetEmailFormValues) {
     setLoading(true);
     try {
-      const response = await fetch("/api/password/forgot", {
+      const response = await api("/api/password/forgot", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -40,20 +41,18 @@ export default function GetEmailForm() {
         body: JSON.stringify(formData),
       });
 
-      if (!response.ok) {
-        const { error } = await response.json();
-        toast.error(`Error: ${error}`);
-        return;
-      }
-
       const { message } = await response.json();
       toast.success(message);
 
       sessionStorage.setItem("verificationEmail", formData.email);
 
       router.replace("/password/verify-email");
-    } catch (error) {
-      toast.error(`Error: ${error}`);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("An unknown error occurred");
+      }
     } finally {
       setLoading(false);
     }
