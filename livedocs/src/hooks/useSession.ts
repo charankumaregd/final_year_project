@@ -11,7 +11,7 @@ export interface Session {
 
 export default function useSession() {
   const [sessions, setSessions] = useState<Session[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const [deleting, setDeleting] = useState<string | null>(null);
 
   async function fetchSessions() {

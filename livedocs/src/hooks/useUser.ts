@@ -12,7 +12,7 @@ export interface User {
 
 export default function useUser() {
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
 
   async function fetchUser() {
     try {

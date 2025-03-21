@@ -14,7 +14,10 @@ export interface Document {
 export default function useDocument(documentId?: string) {
   const [documents, setDocuments] = useState<Document[]>([]);
   const [document, setDocument] = useState<Document | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [creating, setCreating] = useState<boolean>(false);
+  const [updating, setUpdating] = useState<boolean>(false);
+  const [deleting, setDeleting] = useState<boolean>(false);
   const router = useRouter();
 
   async function fetchDocuments() {
@@ -59,6 +62,8 @@ export default function useDocument(documentId?: string) {
 
   async function createDocument(title?: string) {
     try {
+      setCreating(true);
+
       const response = await api("/api/document", {
         method: "POST",
         body: JSON.stringify({ title }),
@@ -77,6 +82,8 @@ export default function useDocument(documentId?: string) {
       } else {
         toast.error("An unknown error occurred");
       }
+    } finally {
+      setCreating(false);
     }
   }
 
@@ -86,6 +93,8 @@ export default function useDocument(documentId?: string) {
     content?: string
   ) {
     try {
+      setUpdating(true);
+
       const response = await api(`/api/document/${documentId}`, {
         method: "PATCH",
         body: JSON.stringify({ title, content }),
@@ -108,11 +117,15 @@ export default function useDocument(documentId?: string) {
       } else {
         toast.error("An unknown error occurred");
       }
+    } finally {
+      setUpdating(false);
     }
   }
 
   async function deleteDocument(documentId: string) {
     try {
+      setDeleting(true);
+
       await api(`/api/document/${documentId}`, {
         method: "DELETE",
       });
@@ -128,6 +141,8 @@ export default function useDocument(documentId?: string) {
       } else {
         toast.error("An unknown error occurred");
       }
+    } finally {
+      setDeleting(false);
     }
   }
 
@@ -142,9 +157,12 @@ export default function useDocument(documentId?: string) {
   return {
     documents,
     document,
-    loading,
     createDocument,
     updateDocument,
     deleteDocument,
+    loading,
+    creating,
+    updating,
+    deleting,
   };
 }
