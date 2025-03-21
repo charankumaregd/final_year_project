@@ -2,7 +2,7 @@ import { api } from "@/lib/api";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
-interface User {
+export interface User {
   id: string;
   name: string;
   email: string;

@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,14 +11,28 @@ import {
   CardContent,
   CardFooter,
 } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import useDocument from "@/hooks/useDocument";
 import { LoaderCircle } from "lucide-react";
 
-export default function Document() {
+export default function UpdateDocument() {
   const params = useParams();
   const router = useRouter();
   const documentId = params.documentId as string;
-  const { document, loading } = useDocument(documentId);
+  const { document, loading, updateDocument } = useDocument(documentId);
+  const [title, setTitle] = useState<string>("");
+  const [content, setContent] = useState<string>("");
+
+  async function handleUpdate() {
+    await updateDocument(documentId, title, content);
+  }
+
+  useEffect(() => {
+    if (document) {
+      setTitle(document.title || "");
+      setContent(document.content || "");
+    }
+  }, [document]);
 
   if (loading) {
     return (
@@ -39,21 +54,26 @@ export default function Document() {
   }
 
   return (
-    <main className="max-w-2xl py-12">
+    <main>
       <Card>
         <CardHeader>
-          <CardTitle>{document.title || "Untitled Document"}</CardTitle>
+          <CardTitle>Document Editor</CardTitle>
           <CardDescription>
-            Created at: {new Date(document.createdAt).toLocaleString()}
+            Edit the title and content of your document.
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <p>{document.content || "No content available."}</p>
+        <CardContent className="space-y-4">
+          <Input value={title} onChange={(e) => setTitle(e.target.value)} />
+          <textarea
+            placeholder="Content"
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            className="w-full h-64 border p-4 rounded-md"
+          />
         </CardContent>
-        <CardFooter>
-          <Button onClick={() => router.push("/user/document")}>
-            Back to Documents
-          </Button>
+        <CardFooter className="flex items-center justify-end space-x-4">
+          <Button onClick={handleUpdate}>Save</Button>
+          <Button onClick={() => router.back()}>Back</Button>
         </CardFooter>
       </Card>
     </main>

@@ -7,7 +7,6 @@ import { Input } from "@/components/ui/input";
 import {
   Card,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -21,7 +20,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { LoaderCircle } from "lucide-react";
+import { FileEdit, LoaderCircle, Plus, Trash2 } from "lucide-react";
 import useDocument from "@/hooks/useDocument";
 
 export default function Documents() {
@@ -35,13 +34,15 @@ export default function Documents() {
   const router = useRouter();
 
   return (
-    <main className="max-w-2xl py-12">
+    <main>
       <div className="flex justify-between items-center">
-        <h1 className="text-xl md:text-3xl font-bold">My Documents</h1>
-
+        <h1 className="text-2xl font-bold">My Documents</h1>
         <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
           <DialogTrigger asChild>
-            <Button>Create</Button>
+            <Button size="sm">
+              <Plus />
+              New
+            </Button>
           </DialogTrigger>
           <DialogContent onCloseAutoFocus={(e) => e.preventDefault()}>
             <DialogHeader>
@@ -77,22 +78,18 @@ export default function Documents() {
           <LoaderCircle className="animate-spin" />
         </div>
       ) : documents.length === 0 ? (
-        <div className="flex justify-center items-center h-96">
-          <p>No documents found.</p>
-        </div>
+        <p className="text-muted-foreground">No documents found.</p>
       ) : (
-        <div className="flex flex-col space-y-4">
-          {documents.map((doc) => (
-            <Card key={doc.id}>
-              <CardHeader>
-                <CardTitle>{doc.title || "Untitled"}</CardTitle>
-                <CardDescription>
-                  Created at: {new Date(doc.createdAt).toLocaleString()}
-                </CardDescription>
-              </CardHeader>
-              <CardFooter className="space-x-4">
-                <Button onClick={() => router.push(`/user/document/${doc.id}`)}>
-                  Open
+        <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+          {documents.map((document) => (
+            <Card key={document.id} className="relative">
+              <div className="absolute right-3 top-3">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => router.push(`/user/document/${document.id}`)}
+                >
+                  <FileEdit />
                 </Button>
                 <Dialog
                   open={isDeleteModalOpen}
@@ -100,14 +97,15 @@ export default function Documents() {
                 >
                   <DialogTrigger asChild>
                     <Button
-                      variant="destructive"
+                      variant="ghost"
+                      size="icon"
                       onClick={(e) => {
                         e.stopPropagation();
-                        setSelectedDocumentId(doc.id);
+                        setSelectedDocumentId(document.id);
                         setIsDeleteModalOpen(true);
                       }}
                     >
-                      Delete
+                      <Trash2 className="text-destructive-foreground" />
                     </Button>
                   </DialogTrigger>
                   <DialogContent onCloseAutoFocus={(e) => e.preventDefault()}>
@@ -138,7 +136,20 @@ export default function Documents() {
                     </DialogFooter>
                   </DialogContent>
                 </Dialog>
-              </CardFooter>
+              </div>
+              <CardHeader>
+                <CardTitle className="flex items-center justify-between">
+                  <span>
+                    {document.title?.length > 25
+                      ? `${document.title.slice(0, 25).trim()}...`
+                      : document.title || "Untitled"}
+                  </span>
+                </CardTitle>
+                <CardDescription>
+                  Last Modified: {""}
+                  {new Date(document.updatedAt).toLocaleString()}
+                </CardDescription>
+              </CardHeader>
             </Card>
           ))}
         </div>

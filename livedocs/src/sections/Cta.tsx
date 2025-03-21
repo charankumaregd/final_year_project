@@ -10,7 +10,7 @@ export default function Cta() {
   const { isAuthenticated } = useAuth();
 
   return (
-    <section id="faq" className="pb-20 md:pb-24">
+    <section id="faq" className="pt-20 md:pt-24 pb-20 md:pb-24">
       <div className="flex flex-col items-center justify-center text-center bg-secondary rounded-md px-4 py-20 space-y-4">
         <div className="text-center space-y-2 max-w-3xl">
           <Badge>Get Started</Badge>

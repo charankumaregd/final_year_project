@@ -2,7 +2,7 @@ import { api } from "@/lib/api";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 
-interface Session {
+export interface Session {
   id: string;
   userAgent: string;
   createdAt: string;

@@ -11,7 +11,7 @@ export default function HowItWorks() {
   return (
     <section
       id="how-it-works"
-      className="flex flex-col items-center justify-center space-y-8"
+      className="flex flex-col items-center justify-center space-y-8 pt-20 md:pt-24"
     >
       <div className="text-center space-y-2 max-w-3xl">
         <Badge>How It Works</Badge>

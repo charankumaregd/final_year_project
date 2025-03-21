@@ -59,7 +59,7 @@ export async function PATCH(request: NextRequest, { params }: DocumentParams) {
 
     const updatedDocument = await updateDocument(
       documentId,
-      title!,
+      title || "",
       content || ""
     );
 

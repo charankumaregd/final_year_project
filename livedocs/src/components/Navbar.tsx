@@ -8,10 +8,14 @@ import { ToggleTheme } from "@/components/ToggleTheme";
 import { Button } from "@/components/ui/button";
 import { LoaderCircle, Menu, X } from "lucide-react";
 import useAuth from "@/hooks/useAuth";
+import { usePathname } from "next/navigation";
+import UserProfile from "@/components/UserProfile";
 
 export default function Navbar() {
   const [isNavOpen, setisNavOpen] = useState(false);
   const { isAuthenticated, logout, isLoggingOut } = useAuth();
+  const pathname = usePathname();
+  const isUserPage = pathname.startsWith("/user");
 
   useEffect(() => {
     function handleResize() {
@@ -42,19 +46,25 @@ export default function Navbar() {
 
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center space-x-8">
-            {navigation.map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                className="text-sm text-accent-foreground font-medium hover:underline hover:underline-offset-2"
-              >
-                {item.name}
-              </Link>
-            ))}
+            {!isUserPage &&
+              navigation.map((item) => (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className="text-sm text-accent-foreground font-medium hover:underline hover:underline-offset-2"
+                >
+                  {item.name}
+                </Link>
+              ))}
 
             <div className="flex items-center space-x-4">
               <ToggleTheme />
-              {!isAuthenticated && (
+              {isUserPage && (
+                <>
+                  <UserProfile />
+                </>
+              )}
+              {!isUserPage && !isAuthenticated && (
                 <>
                   <Link href="/login">
                     <Button
@@ -76,7 +86,7 @@ export default function Navbar() {
                   </Link>
                 </>
               )}
-              {isAuthenticated && (
+              {!isUserPage && isAuthenticated && (
                 <>
                   <Button
                     variant="outline"
@@ -106,13 +116,16 @@ export default function Navbar() {
           {/* Mobile Nav */}
           <div className="md:hidden flex items-center justify-center space-x-2">
             <ToggleTheme />
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => setisNavOpen(!isNavOpen)}
-            >
-              {isNavOpen ? <X /> : <Menu />}
-            </Button>
+            {isUserPage && <UserProfile />}
+            {!isUserPage && (
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => setisNavOpen(!isNavOpen)}
+              >
+                {isNavOpen ? <X /> : <Menu />}
+              </Button>
+            )}
           </div>
         </div>
       </div>
