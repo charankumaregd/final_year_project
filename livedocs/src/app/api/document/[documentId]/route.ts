@@ -7,14 +7,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { updateDocumentSchema } from "@/lib/zod";
 
 export interface DocumentParams {
-  params: {
+  params: Promise<{
     documentId: string;
-  };
+  }>;
 }
 
 export async function GET(request: NextRequest, { params }: DocumentParams) {
   try {
-    const documentId = params.documentId;
+    const { documentId } = await params;
 
     if (!documentId) {
       return NextResponse.json(
@@ -44,7 +44,7 @@ export async function GET(request: NextRequest, { params }: DocumentParams) {
 
 export async function PATCH(request: NextRequest, { params }: DocumentParams) {
   try {
-    const documentId = params.documentId;
+    const { documentId } = await params;
 
     if (!documentId) {
       return NextResponse.json(
@@ -87,7 +87,7 @@ export async function DELETE(request: NextRequest, { params }: DocumentParams) {
       );
     }
 
-    const documentId = params.documentId;
+    const { documentId } = await params;
 
     if (!documentId) {
       return NextResponse.json(
