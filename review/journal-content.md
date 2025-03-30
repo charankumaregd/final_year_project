@@ -59,9 +59,32 @@ By this, LiveDocs provides a simple, cost-effective, scalable, and secure altern
 
 ## 2.1 Overview of Existing Systems
 
+Real-time collaborative editing has emerged as a critical area of research and development, enabling multiple users to modify a shared document simultaneously. Prominent existing systems, such as Google Docs and Etherpad, utilize centralized architectures to maintain document consistency and ensure availability [1]. These platforms have gained widespread adoption due to their user-friendly interfaces and seamless cloud integration. However, as the number of concurrent users increases, these systems experience scalability issues, leading to performance degradation and increased latency [1].
+
+Collaborative coding environments have also seen advancements, particularly in enabling real-time multi-user interactions. Virdi et al. [2] examined various collaborative code editors, which employ WebSocket-based communication and Operational Transformation (OT) algorithms for maintaining synchronization. Despite the benefits of these systems in fostering real-time collaboration among distributed software development teams, persistent issues such as synchronization delays and conflict resolution complexities hinder their efficiency at scale [2].
+
+Security and privacy remain significant concerns in real-time collaborative editing. Arora and Atrey [3] proposed SecureC2Edit, a secure collaborative editing framework that encrypts user data before storing it on cloud servers. This framework enhances data privacy by ensuring that plaintext user content is never exposed to cloud-based storage providers. However, encryption-based solutions introduce additional computational overhead, which may impact the responsiveness of real-time collaboration [3].
+
+A shift towards decentralized collaborative editing systems has been proposed as an alternative to centralized platforms. Konstantopoulos et al. [4] introduced O3 REAL, a peer-to-peer (P2P) system for real-time collaboration. O3 REAL employs a reliable broadcast mechanism for network communication and utilizes a distributed filesystem for document storage. This decentralized approach eliminates reliance on third-party servers, thereby improving fault tolerance and scalability [4]. Notably, O3 REAL demonstrated low latency and high efficiency in collaborative editing, making it a promising direction for future real-time collaborative systems.
+
 ## 2.2 Limitations of Current Approaches
 
+Despite significant progress in real-time collaborative editing, existing solutions exhibit notable limitations:
+
+- Scalability and Performance Constraints: As noted by Dang and Ignat [1], mainstream collaborative editing platforms such as Google Docs and Etherpad struggle with increased user concurrency, leading to higher latency. This negatively affects user experience and restricts their applicability in large-scale collaborative settings.
+- Synchronization and Consistency Challenges: Collaborative code editors, as discussed by Virdi et al. [2], rely on OT-based synchronization mechanisms, which become computationally expensive and complex when handling simultaneous modifications from multiple users.
+- Security and Privacy Risks: Cloud-based collaborative systems expose sensitive user data to potential security breaches. While SecureC2Edit [3] mitigates these risks through encryption, it introduces additional processing overhead that impacts real-time responsiveness.
+- Dependence on Centralized Infrastructure: The reliance on cloud-based infrastructures results in single points of failure, higher operational costs, and potential vendor lock-in. While decentralized solutions such as O3 REAL [4] address some of these concerns, they do not fully resolve real-time synchronization challenges over peer-to-peer networks.
+
 ## 2.3 Positioning of the Proposed Work
+
+LiveDocs is designed to address the limitations of existing real-time collaborative editing systems by leveraging a decentralized P2P architecture and Conflict-Free Replicated Data Types (CRDTs) for efficient synchronization. Unlike Google Docs and Etherpad, which rely on cloud-based architectures and experience increased latency with higher user loads, LiveDocs utilizes WebRTC to enable direct peer-to-peer communication, reducing server dependency and minimizing delays.
+
+Collaborative coding environments predominantly use OT-based synchronization; however, LiveDocs adopts Yjs, a CRDT-based approach that simplifies conflict resolution while maintaining real-time consistency. This methodology eliminates the complexity associated with traditional operational transformations and improves performance in multi-user editing scenarios.
+
+Furthermore, LiveDocs enhances security and privacy by eliminating centralized server, ensuring that document content remains confined within the P2P network. This decentralized model builds upon the principles introduced by O3 REAL [4], while integrating PostgreSQL for persistence mechanisms to improve data reliability and synchronization efficiency.
+
+By incorporating a robust P2P communication model, CRDT-based synchronization, and enhanced security measures, LiveDocs presents a novel solution that surpasses the scalability, performance, and privacy limitations of existing real-time collaborative editing systems. This framework provides a viable alternative to traditional centralized approaches, paving the way for a more efficient and secure collaborative editing experience.
 
 # 3. System Architecture
 
