@@ -1,0 +1,88 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum VerificationType {
+  EMAIL_VERIFICATION
+  PASSWORD_RESET
+}
+
+enum AccessRole {
+  VIEWER
+  EDITOR
+  OWNER
+}
+
+model User {
+  id                    String             @id @default(uuid())
+  name                  String
+  email                 String             @unique
+  password              String
+  emailVerified         Boolean            @default(false)
+  createdAt             DateTime           @default(now())
+  updatedAt             DateTime           @updatedAt
+  color                 String
+  documents             Document[]         @relation("UserDocuments")
+  accesses              DocumentAccess[]   @relation("UserAccesses")
+  sessions              Session[]          @relation("UserSessions")
+  verificationCodes     VerificationCode[] @relation("UserVerificationCodes")
+
+  @@index([email])
+}
+
+model VerificationCode {
+  id        String           @id @default(uuid())
+  userId    String
+  code      String           @db.VarChar(6)
+  type      VerificationType
+  createdAt DateTime         @default(now())
+  expiresAt DateTime
+  user      User             @relation("UserVerificationCodes", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, type])
+  @@index([expiresAt])
+}
+
+model Session {
+  id        String   @id @default(uuid())
+  userId    String
+  userAgent String
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+  user      User     @relation("UserSessions", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Document {
+  id            String           @id @default(uuid())
+  title         String
+  content       String
+  ownerId       String
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+  owner         User             @relation("UserDocuments", fields: [ownerId], references: [id], onDelete: Cascade)
+  access        DocumentAccess[] @relation("DocumentAccesses")
+
+  @@index([title])
+}
+
+model DocumentAccess {
+  id         String     @id @default(uuid())
+  documentId String
+  userId     String
+  role       AccessRole
+  createdAt  DateTime   @default(now())
+  document   Document   @relation("DocumentAccesses", fields: [documentId], references: [id], onDelete: Cascade)
+  user       User       @relation("UserAccesses", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([documentId, userId])
+  @@index([userId])
+  @@index([documentId])
+}
