@@ -1,8 +1,0 @@
-<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M200 512L0 362H200V512Z" fill="#8FD1FA"/>
-<path d="M256 0H0V362H200V512H256C397.385 512 512 397.385 512 256C512 114.615 397.385 0 256 0Z" fill="#357BF4"/>
-<path d="M100 100H150V150H100V100Z" fill="white"/>
-<path d="M200 100H300V150H200V100Z" fill="white"/>
-<path d="M200 200H350V250H200V200Z" fill="white"/>
-<path d="M100 200H150V250H100V200Z" fill="white"/>
-</svg>
